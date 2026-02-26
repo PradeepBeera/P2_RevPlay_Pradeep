@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: RevPlay
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 60MB
+  jpa:
+    open-in-view: true
+    properties:
+      hibernate:
+        format_sql: false
+
+app:
+  jwt:
+    secret: 4a6f686e446f65536563726574556c7472614c6f6e674b6579466f724a5754546f6b656e5369676e696e67526576506c6179
+    access-token-expiration: 86400000
+    refresh-token-expiration: 604800000
+  file:
+    upload-dir: ./uploads
+    audio-dir: ./uploads/audio
+    image-dir: ./uploads/images
+  cors:
+    allowed-origins: http://localhost:8080

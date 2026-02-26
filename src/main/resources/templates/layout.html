@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(pageTitle, content)">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' | RevPlay'">RevPlay</title>
+    <meta name="description" content="RevPlay - Premium Music Streaming Platform">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-compact-disc brand-icon"></i>
+                <span class="brand-text">RevPlay</span>
+            </div>
+            <div class="sidebar-nav">
+                <!-- Navigation for Listeners & Guest Users -->
+                <div th:unless="${isArtist}">
+                    <a th:href="@{/}" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+                    <a th:href="@{/browse}" class="nav-item"><i class="fas fa-compass"></i><span>Browse</span></a>
+                    <a th:href="@{/podcasts}" class="nav-item"><i class="fas fa-podcast"></i><span>Podcasts</span></a>
+                    <a th:href="@{/search}" class="nav-item"><i class="fas fa-search"></i><span>Search</span></a>
+
+                    <div th:if="${currentUser}" class="nav-section">
+                        <span class="nav-section-title">Library</span>
+                        <a th:href="@{/my/playlists}" class="nav-item"><i
+                                class="fas fa-list"></i><span>Playlists</span></a>
+                        <a th:href="@{/my/favorites}" class="nav-item"><i
+                                class="fas fa-heart"></i><span>Favorites</span></a>
+                        <a th:href="@{/my/history}" class="nav-item"><i
+                                class="fas fa-clock"></i><span>History</span></a>
+                    </div>
+                </div>
+
+                <!-- Navigation strictly for Artists -->
+                <div th:if="${isArtist}" class="nav-section">
+                    <span class="nav-section-title">Artist Control Panel</span>
+                    <a th:href="@{/dashboard}" class="nav-item"><i class="fas fa-chart-line"></i><span>Artist
+                            Dashboard</span></a>
+                    <a th:href="@{/dashboard/upload}" class="nav-item"><i class="fas fa-upload"></i><span>Upload
+                            Songs</span></a>
+                    <a th:href="@{/dashboard/albums}" class="nav-item"><i class="fas fa-record-vinyl"></i><span>Manage
+                            Albums</span></a>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div th:if="${currentUser}" class="user-card">
+                    <div class="user-avatar">
+                        <img th:if="${currentUser.profilePicture}" th:src="${currentUser.profilePicture}" alt="avatar">
+                        <i th:unless="${currentUser.profilePicture}" class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" th:text="${currentUser.displayName ?: currentUser.username}">User</span>
+                        <span class="user-role" th:text="${currentUser.role}">LISTENER</span>
+                    </div>
+                    <a th:href="@{/my/profile}" class="user-settings" title="Profile"><i class="fas fa-cog"></i></a>
+                    <a th:href="@{/logout}" class="user-settings" title="Logout" style="margin-left: 10px;"><i
+                            class="fas fa-sign-out-alt"></i></a>
+                </div>
+                <div th:unless="${currentUser}" class="auth-links">
+                    <a th:href="@{/login}" class="btn btn-primary btn-sm">Sign In</a>
+                    <a th:href="@{/register}" class="btn btn-outline btn-sm">Sign Up</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="search-bar-mini">
+                    <form th:action="@{/search}" method="get">
+                        <i class="fas fa-search"></i>
+                        <input type="text" name="query" placeholder="Search songs, artists...">
+                    </form>
+                </div>
+            </header>
+
+            <div class="page-content" th:insert="${content}">
+            </div>
+
+            <!-- Minimal, clean footer for a professional look -->
+            <footer class="app-footer">
+                <div class="footer-copyright">
+                    &copy; 2024 RevPlay. Premium Music Experience.
+                </div>
+                <div class="footer-links">
+                    <a href="#">About</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Support</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <div id="music-player" class="music-player" style="display:none;">
+        <div class="player-track-info">
+            <img id="player-cover" src="" alt="cover" class="player-cover">
+            <div class="player-text">
+                <span id="player-title" class="player-title">No track playing</span>
+                <span id="player-artist" class="player-artist">-</span>
+            </div>
+            <button id="player-fav-btn" class="player-btn player-fav" onclick="togglePlayerFavorite()">
+                <i class="far fa-heart"></i>
+            </button>
+        </div>
+        <div class="player-controls">
+            <div class="player-buttons">
+                <button class="player-btn" onclick="toggleShuffle()"><i id="shuffle-icon"
+                        class="fas fa-shuffle"></i></button>
+                <button class="player-btn" onclick="playPrevious()"><i class="fas fa-backward-step"></i></button>
+                <button class="player-btn play-btn" onclick="togglePlay()">
+                    <i id="play-icon" class="fas fa-play"></i>
+                </button>
+                <button class="player-btn" onclick="playNext()"><i class="fas fa-forward-step"></i></button>
+                <button class="player-btn" onclick="toggleRepeat()"><i id="repeat-icon"
+                        class="fas fa-repeat"></i></button>
+            </div>
+            <div class="player-progress">
+                <span id="current-time" class="time-label">0:00</span>
+                <div class="progress-bar" id="progress-bar" onclick="seekTo(event)">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span id="total-time" class="time-label">0:00</span>
+            </div>
+        </div>
+        <div class="player-extra">
+            <button class="player-btn" onclick="toggleQueue()"><i class="fas fa-bars-staggered"></i></button>
+            <div class="volume-control">
+                <button class="player-btn" onclick="toggleMute()"><i id="volume-icon"
+                        class="fas fa-volume-high"></i></button>
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="80"
+                    oninput="setVolume(this.value)">
+            </div>
+        </div>
+    </div>
+
+    <div id="queue-panel" class="queue-panel" style="display:none;">
+        <div class="queue-header">
+            <h3>Queue</h3>
+            <button class="player-btn" onclick="toggleQueue()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div id="queue-list" class="queue-list"></div>
+    </div>
+
+    <audio id="audio-element"></audio>
+    <script th:src="@{/js/player.js}"></script>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

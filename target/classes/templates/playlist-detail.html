@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Playlist</title>
+</head>
+
+<body>
+    <section th:if="${playlist}">
+        <div class="detail-header">
+            <div class="detail-icon playlist-icon-lg"><i class="fas fa-list-ul"></i></div>
+            <div class="detail-info">
+                <span class="detail-type">PLAYLIST</span>
+                <h1 th:text="${playlist.name}">Playlist</h1>
+                <p th:text="${playlist.description}">Description</p>
+                <span class="detail-meta"
+                    th:text="${playlist.songCount + ' songs · ' + playlist.privacy + ' · by ' + playlist.ownerName}">Info</span>
+                <div class="playlist-stats" style="margin-top: 10px;">
+                    <span class="badge" th:text="${playlist.followerCount + ' followers'}">0 followers</span>
+                    <button
+                        th:if="${currentUser != null and currentUser.id != playlist.userId and playlist.privacy == 'PUBLIC'}"
+                        class="btn btn-sm" th:classappend="${playlist.isFollowed ? 'btn-outline' : 'btn-primary'}"
+                        th:id="'follow-btn-' + ${playlist.id}" th:data-id="${playlist.id}"
+                        th:data-followed="${playlist.isFollowed}"
+                        onclick="toggleFollowPlaylist(this.dataset.id, this.dataset.followed === 'true')">
+                        <i class="fas" th:classappend="${playlist.isFollowed ? 'fa-check' : 'fa-plus'}"></i>
+                        <span th:text="${playlist.isFollowed ? 'Following' : 'Follow'}">Follow</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div th:if="${playlist.songs != null and !playlist.songs.isEmpty()}" class="track-list" id="playlist-tracks">
+            <div th:each="song,iter : ${playlist.songs}" class="track-row" th:attr="data-song-id=${song.id}">
+                <span class="track-num" th:text="${iter.index + 1}">1</span>
+                <div class="track-cover-sm">
+                    <img th:if="${song.coverImage}" th:src="${song.coverImage}" alt="">
+                    <div th:unless="${song.coverImage}" class="cover-placeholder-sm"><i class="fas fa-music"></i></div>
+                </div>
+                <div class="track-info" th:data-id="${song.id}" th:data-title="${song.title}"
+                    th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                    th:data-cover="${song.coverImage}"
+                    onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                    <span class="track-title" th:text="${song.title}">Song</span>
+                    <span class="track-artist" th:text="${song.artistName}">Artist</span>
+                </div>
+                <span class="track-duration" th:if="${song.duration}"
+                    th:text="${(song.duration / 60) + ':' + T(String).format('%02d', song.duration % 60)}">0:00</span>
+                <button class="track-action" th:data-playlist="${playlist.id}" th:data-song="${song.id}"
+                    onclick="removeFromPlaylist(+this.dataset.playlist, +this.dataset.song)"><i
+                        class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div th:if="${playlist.songs == null or playlist.songs.isEmpty()}" class="empty-state">
+            <i class="fas fa-music"></i>
+            <p>This playlist is empty. Browse songs and add them here!</p>
+        </div>
+    </section>
+    <script th:if="${currentUser}">
+        async function toggleFollowPlaylist(id, isFollowed) {
+            const btn = document.getElementById('follow-btn-' + id);
+            const method = isFollowed ? 'DELETE' : 'POST';
+            try {
+                const response = await fetch(`/api/playlists/${id}/follow`, { method: method });
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Action failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

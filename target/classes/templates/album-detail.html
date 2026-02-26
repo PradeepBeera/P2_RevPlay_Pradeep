@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Album</title>
+</head>
+
+<body>
+    <section th:if="${album}">
+        <div class="detail-header">
+            <div class="detail-cover-lg">
+                <img th:if="${album.coverImage}" th:src="${album.coverImage}" alt="">
+                <div th:unless="${album.coverImage}" class="cover-placeholder-lg"><i class="fas fa-record-vinyl"></i>
+                </div>
+            </div>
+            <div class="detail-info">
+                <span class="detail-type">ALBUM</span>
+                <h1 th:text="${album.name}">Album Name</h1>
+                <a th:href="@{/artist/{id}(id=${album.artistId})}" class="detail-artist"
+                    th:text="${album.artistName}">Artist</a>
+                <span class="detail-meta" th:if="${album.releaseDate}" th:text="${album.releaseDate}">2024</span>
+            </div>
+        </div>
+        <div th:if="${album.songs != null and !album.songs.isEmpty()}" class="track-list">
+            <div th:each="song,iter : ${album.songs}" class="track-row" th:data-id="${song.id}"
+                th:data-title="${song.title}" th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                th:data-cover="${song.coverImage}"
+                onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                <span class="track-num" th:text="${iter.index + 1}">1</span>
+                <div class="track-info">
+                    <span class="track-title" th:text="${song.title}">Song</span>
+                </div>
+                <span class="track-plays"><i class="fas fa-play"></i> <span th:text="${song.playCount}">0</span></span>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

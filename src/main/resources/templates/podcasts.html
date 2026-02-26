@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Podcasts', ~{::section})}">
+
+<head>
+</head>
+
+<body>
+    <section class="podcasts-container">
+        <div class="header-with-actions">
+            <div>
+                <h1 class="page-title">Browse Podcasts</h1>
+                <p class="section-subtitle">Discover incredible stories and insights</p>
+            </div>
+        </div>
+
+        <div class="podcasts-grid" th:if="${not #lists.isEmpty(podcasts)}">
+            <div th:each="podcast : ${podcasts}" class="podcast-card">
+                <a th:href="@{/podcast/{id}(id=${podcast.id})}" class="podcast-link">
+                    <div class="podcast-cover">
+                        <img th:src="${podcast.coverImage != null ? podcast.coverImage : '/images/default-album.png'}"
+                            alt="podcast cover">
+                        <div class="play-overlay">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                    </div>
+                    <div class="podcast-info">
+                        <h3 class="podcast-title" th:text="${podcast.title}">Podcast Title</h3>
+                        <p class="podcast-artist" th:text="${podcast.artistName}">Artist Name</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(podcasts)}" class="empty-state">
+            <i class="fas fa-podcast"></i>
+            <h3>No podcasts found</h3>
+            <p>Check back later for new content!</p>
+        </div>
+    </section>
+</body>
+
+</html>

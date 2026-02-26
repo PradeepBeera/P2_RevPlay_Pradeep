@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>History</title>
+</head>
+
+<body>
+    <section>
+        <h1 class="page-title"><i class="fas fa-clock"></i> Recently Played</h1>
+        <div th:if="${history != null and !history.isEmpty()}" class="track-list">
+            <div th:each="song,iter : ${history}" class="track-row" th:data-id="${song.id}"
+                th:data-title="${song.title}" th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                th:data-cover="${song.coverImage}"
+                onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                <span class="track-num" th:text="${iter.index + 1}">1</span>
+                <div class="track-cover-sm">
+                    <img th:if="${song.coverImage}" th:src="${song.coverImage}" alt="">
+                    <div th:unless="${song.coverImage}" class="cover-placeholder-sm"><i class="fas fa-music"></i></div>
+                </div>
+                <div class="track-info">
+                    <span class="track-title" th:text="${song.title}">Song</span>
+                    <span class="track-artist" th:text="${song.artistName}">Artist</span>
+                </div>
+            </div>
+        </div>
+        <div th:if="${history == null or history.isEmpty()}" class="empty-state">
+            <i class="fas fa-clock"></i>
+            <p>No listening history yet. Play a song!</p>
+        </div>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(${podcast.title}, ~{::section})}">
+
+<head>
+</head>
+
+<body>
+    <section class="podcast-detail-container">
+        <div class="podcast-header">
+            <img th:src="${podcast.coverImage != null ? podcast.coverImage : '/images/default-album.png'}"
+                alt="podcast cover" class="podcast-header-img">
+            <div class="podcast-header-info">
+                <span class="badge">PODCAST</span>
+                <h1 th:text="${podcast.title}">Podcast Title</h1>
+                <p class="artist-link-container">
+                    By <a th:href="@{/artist/{id}(id=${podcast.artistId})}" th:text="${podcast.artistName}">Artist</a>
+                </p>
+                <div class="description" th:text="${podcast.description}">Description</div>
+            </div>
+        </div>
+
+        <div class="episodes-section">
+            <h2 class="section-title">Episodes</h2>
+            <div class="episodes-list" th:if="${not #lists.isEmpty(podcast.episodes)}">
+                <div th:each="episode : ${podcast.episodes}" class="episode-item">
+                    <div class="episode-icon">
+                        <i class="fas fa-play-circle"
+                            th:onclick="'playSong(' + ${episode.id} + ', \'' + ${episode.audioUrl} + '\', \'' + ${episode.title} + '\', \'' + ${podcast.artistName} + '\', \'' + ${podcast.coverImage} + '\')'"></i>
+                    </div>
+                    <div class="episode-main">
+                        <h4 th:text="${episode.title}">Episode Title</h4>
+                        <p class="episode-meta">
+                            <span th:text="${episode.releaseDate}">Date</span> &bull;
+                            <span
+                                th:text="${episode.duration != null ? episode.duration + ' min' : 'Audio'}">Duration</span>
+                        </p>
+                        <p class="episode-desc" th:text="${episode.description}">Short description</p>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(podcast.episodes)}" class="empty-state-mini">
+                <p>No episodes uploaded yet.</p>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

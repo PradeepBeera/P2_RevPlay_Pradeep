@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Albums</title>
+</head>
+
+<body>
+    <section>
+        <div class="section-header">
+            <h1 class="page-title">My Albums</h1>
+            <button class="btn btn-primary" onclick="showCreateAlbum()"><i class="fas fa-plus"></i> New Album</button>
+        </div>
+        <div id="create-album-form" class="create-form" style="display:none;">
+            <input type="text" id="album-name" placeholder="Album name *" class="form-input" required>
+            <input type="text" id="album-desc" placeholder="Description" class="form-input">
+            <div class="form-group file-group">
+                <div class="file-upload" onclick="document.getElementById('album-cover').click()">
+                    <i class="fas fa-image"></i>
+                    <span id="album-cover-label">Choose cover image</span>
+                    <input type="file" id="album-cover" accept="image/*"
+                        onchange="updateFileLabel('album-cover', 'album-cover-label')" hidden>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="createAlbum()">Create Album</button>
+            <button class="btn btn-outline btn-sm" onclick="hideCreateAlbum()">Cancel</button>
+        </div>
+        <div th:if="${albums != null and !albums.isEmpty()}" class="song-grid">
+            <a th:each="album : ${albums}" th:href="@{/album/{id}(id=${album.id})}" class="song-card">
+                <div class="song-card-cover">
+                    <img th:if="${album.coverImage}" th:src="${album.coverImage}" alt="">
+                    <div th:unless="${album.coverImage}" class="cover-placeholder"><i class="fas fa-record-vinyl"></i>
+                    </div>
+                </div>
+                <div class="song-card-info">
+                    <span class="song-card-title" th:text="${album.name}">Album</span>
+                    <span class="song-card-artist" th:text="${album.releaseDate}">Date</span>
+                </div>
+            </a>
+        </div>
+        <div th:if="${albums == null or albums.isEmpty()}" class="empty-state">
+            <i class="fas fa-record-vinyl"></i>
+            <p>No albums yet. Create your first one!</p>
+        </div>
+    </section>
+</body>
+
+</html>

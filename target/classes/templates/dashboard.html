@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <section th:if="${analytics}">
+        <h1 class="page-title">Artist Dashboard</h1>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-music"></i></div>
+                <div class="stat-value" th:text="${analytics.totalSongs}">0</div>
+                <div class="stat-label">Total Songs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-play"></i></div>
+                <div class="stat-value" th:text="${analytics.totalPlays}">0</div>
+                <div class="stat-label">Total Plays</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                <div class="stat-value" th:text="${analytics.totalFavorites}">0</div>
+                <div class="stat-label">Total Favorites</div>
+            </div>
+        </div>
+
+        <div class="section chart-section">
+            <h2>Listening Trends (Last 7 Days)</h2>
+            <div class="chart-container"
+                style="background: var(--bg-card); padding: 20px; border-radius: 12px; margin-top: 20px;">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <div id="trend-data" style="display:none;" th:attr="data-labels=${#strings.listJoin(analytics.dailyTrends.![label], ',')},
+                      data-values=${#strings.listJoin(analytics.dailyTrends.![value], ',')}">
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                const dataEl = document.getElementById('trend-data');
+                const labels = dataEl.dataset.labels.split(',').filter(l => l);
+                const values = dataEl.dataset.values.split(',').filter(v => v).map(Number);
+
+                new Chart(document.getElementById('trendChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Daily Plays',
+                            data: values,
+                            borderColor: '#1db954',
+                            backgroundColor: 'rgba(29, 185, 84, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <div th:if="${analytics.topSongs != null and !analytics.topSongs.isEmpty()}" class="section">
+            <h2>Top Songs</h2>
+            <div class="track-list">
+                <div th:each="song,iter : ${analytics.topSongs}" class="track-row" style="cursor:pointer;"
+                    th:data-id="${song.id}" th:data-title="${song.title}" th:data-artist="${song.artistName}"
+                    th:data-url="${song.audioUrl}" th:data-cover="${song.coverImage}"
+                    onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                    <span class="track-rank" th:text="'#' + (${iter.index} + 1)">1</span>
+                    <div class="track-cover-sm">
+                        <img th:if="${song.coverImage}" th:src="${song.coverImage}" alt="">
+                        <div th:unless="${song.coverImage}" class="cover-placeholder-sm"><i class="fas fa-music"></i>
+                        </div>
+                    </div>
+                    <div class="track-info">
+                        <span class="track-title" th:text="${song.title}">Song</span>
+                        <span class="track-artist" th:text="${song.artistName}">Artist</span>
+                    </div>
+                    <span class="track-plays"><i class="fas fa-play"></i> <span
+                            th:text="${song.playCount}">0</span></span>
+                    <button class="track-action" title="Delete Song"
+                        style="color: #ef4444; background: none; border: none; cursor: pointer; padding: 10px;"
+                        th:data-id="${song.id}" onclick="event.stopPropagation(); deleteSong(this.dataset.id)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${analytics.topListeners != null and !analytics.topListeners.isEmpty()}" class="section">
+            <h2>Top Listeners</h2>
+            <div class="listener-list">
+                <div th:each="listener,iter : ${analytics.topListeners}" class="listener-row">
+                    <span class="track-rank" th:text="'#' + (${iter.index} + 1)">1</span>
+                    <div class="listener-info">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${listener.username}">User</span>
+                    </div>
+                    <span class="track-plays"><span th:text="${listener.playCount}">0</span> plays</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

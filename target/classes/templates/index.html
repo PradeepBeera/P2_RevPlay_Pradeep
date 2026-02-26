@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Home</title>
+</head>
+
+<body>
+    <section>
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Your Music,<br><span class="gradient-text">Your Vibe</span></h1>
+                <p class="hero-subtitle">Discover millions of tracks from artists around the world</p>
+                <div class="hero-actions">
+                    <a th:href="@{/browse}" class="btn btn-primary btn-lg"><i class="fas fa-play"></i> Start
+                        Listening</a>
+                    <a th:unless="${currentUser}" th:href="@{/register}" class="btn btn-outline btn-lg">Create
+                        Account</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${songs != null and !songs.isEmpty()}">
+            <div class="section-header">
+                <h2>Trending Now</h2>
+                <a th:href="@{/browse}" class="see-all">See All <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <div class="song-grid">
+                <div th:each="song : ${songs}" class="song-card" th:data-id="${song.id}" th:data-title="${song.title}"
+                    th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                    th:data-cover="${song.coverImage}"
+                    onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                    <div class="song-card-cover">
+                        <img th:if="${song.coverImage}" th:src="${song.coverImage}" alt="cover">
+                        <div th:unless="${song.coverImage}" class="cover-placeholder"><i class="fas fa-music"></i></div>
+                        <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="song-card-info">
+                        <span class="song-card-title" th:text="${song.title}">Song Title</span>
+                        <span class="song-card-artist" th:text="${song.artistName}">Artist</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" th:if="${artists != null and !artists.isEmpty()}">
+            <div class="section-header">
+                <h2>Featured Artists</h2>
+            </div>
+            <div class="artist-grid">
+                <a th:each="artist : ${artists}" th:href="@{/artist/{id}(id=${artist.id})}" class="artist-card">
+                    <div class="artist-avatar-lg">
+                        <img th:if="${artist.bannerImage}" th:src="${artist.bannerImage}" alt="artist">
+                        <i th:unless="${artist.bannerImage}" class="fas fa-user"></i>
+                    </div>
+                    <span class="artist-card-name" th:text="${artist.artistName}">Artist</span>
+                    <span class="artist-card-genre" th:text="${artist.genre}">Genre</span>
+                </a>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

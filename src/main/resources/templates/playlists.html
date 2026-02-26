@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>My Playlists</title>
+</head>
+
+<body>
+    <section>
+        <div class="section-header">
+            <h1 class="page-title">My Playlists</h1>
+            <button class="btn btn-primary" onclick="showCreatePlaylist()"><i class="fas fa-plus"></i> New
+                Playlist</button>
+        </div>
+        <div id="create-playlist-form" class="create-form" style="display:none;">
+            <input type="text" id="playlist-name" placeholder="Playlist name" class="form-input">
+            <input type="text" id="playlist-desc" placeholder="Description (optional)" class="form-input">
+            <select id="playlist-privacy" class="form-input">
+                <option value="PRIVATE">Private</option>
+                <option value="PUBLIC">Public</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="createPlaylist()">Create</button>
+            <button class="btn btn-outline btn-sm" onclick="hideCreatePlaylist()">Cancel</button>
+        </div>
+        <div th:if="${playlists != null and !playlists.isEmpty()}" class="playlist-grid">
+            <a th:each="pl : ${playlists}" th:href="@{/my/playlist/{id}(id=${pl.id})}" class="playlist-card">
+                <div class="playlist-card-icon"><i class="fas fa-list-ul"></i></div>
+                <div class="playlist-card-info">
+                    <span class="playlist-card-name" th:text="${pl.name}">Playlist</span>
+                    <span class="playlist-card-meta" th:text="${pl.songCount} + ' songs · ' + ${pl.privacy}">0
+                        songs</span>
+                </div>
+            </a>
+        </div>
+        <div th:if="${playlists == null or playlists.isEmpty()}" class="empty-state">
+            <i class="fas fa-list"></i>
+            <p>No playlists yet. Create your first one!</p>
+        </div>
+    </section>
+</body>
+
+</html>

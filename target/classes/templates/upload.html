@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Upload</title>
+</head>
+
+<body>
+    <section>
+        <h1 class="page-title">Upload Song</h1>
+        <div id="upload-status" class="alert" style="display:none;"></div>
+        <form id="upload-form" class="upload-form" onsubmit="handleUpload(event)">
+            <div class="form-group">
+                <label for="title">Song Title *</label>
+                <input type="text" id="title" name="title" required placeholder="Enter song title" class="form-input">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="genre">Genre</label>
+                    <select id="genre" name="genre" class="form-input">
+                        <option value="">Select genre</option>
+                        <option value="Pop">Pop</option>
+                        <option value="Rock">Rock</option>
+                        <option value="Hip-Hop">Hip-Hop</option>
+                        <option value="R&B">R&B</option>
+                        <option value="Jazz">Jazz</option>
+                        <option value="Electronic">Electronic</option>
+                        <option value="Classical">Classical</option>
+                        <option value="Country">Country</option>
+                        <option value="Indie">Indie</option>
+                        <option value="Metal">Metal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="visibility">Visibility</label>
+                    <select id="visibility" name="visibility" class="form-input">
+                        <option value="PUBLIC">Public</option>
+                        <option value="UNLISTED">Unlisted</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="albumId">Album (optional)</label>
+                <select id="albumId" name="albumId" class="form-input">
+                    <option value="">No album</option>
+                    <option th:each="album : ${albums}" th:value="${album.id}" th:text="${album.name}">Album</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group file-group">
+                    <label>Audio File *</label>
+                    <div class="file-upload" onclick="document.getElementById('audioFile').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span id="audio-label">Choose audio file (MP3, WAV)</span>
+                        <input type="file" id="audioFile" name="audioFile" accept="audio/*" required
+                            onchange="updateFileLabel('audioFile', 'audio-label')" hidden>
+                    </div>
+                </div>
+                <div class="form-group file-group">
+                    <label>Cover Image</label>
+                    <div class="file-upload" onclick="document.getElementById('coverImage').click()">
+                        <i class="fas fa-image"></i>
+                        <span id="cover-label">Choose cover image</span>
+                        <input type="file" id="coverImage" name="coverImage" accept="image/*"
+                            onchange="updateFileLabel('coverImage', 'cover-label')" hidden>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-full" id="upload-btn">
+                <i class="fas fa-upload"></i> Upload Song
+            </button>
+        </form>
+    </section>
+</body>
+
+</html>

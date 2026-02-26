@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:revplay_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+app:
+  jwt:
+    secret: 746573744b65795468617449734c6f6e67456e6f756768466f72484d414353484132353654657374
+    access-token-expiration: 3600000
+    refresh-token-expiration: 7200000
+  file:
+    upload-dir: ./test-uploads
+    audio-dir: ./test-uploads/audio
+    image-dir: ./test-uploads/images
+
+logging:
+  level:
+    com.rev.app: WARN

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Profile</title>
+</head>
+
+<body>
+    <section th:if="${profile}">
+        <h1 class="page-title">My Profile</h1>
+        </div>
+        </div>
+
+        <div id="listener-stats-container" class="section stats-grid" style="margin-top: 30px; display: none;">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-headphones"></i></div>
+                <div id="stat-listening-time" class="stat-value">0</div>
+                <div class="stat-label">Min Listened</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-compact-disc"></i></div>
+                <div id="stat-genres-count" class="stat-value">0</div>
+                <div class="stat-label">Genres Explored</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                <div id="stat-playlists-followed" class="stat-value">0</div>
+                <div class="stat-label">Playlists Followed</div>
+            </div>
+        </div>
+        <div id="top-genres-container" class="section" style="display: none;">
+            <h3>Your Top Genres</h3>
+            <div id="top-genres-list" class="badge-list" style="display:flex; gap:10px; margin-top:10px;"></div>
+        </div>
+        <div class="section stats-grid" style="margin-top: 30px;">
+            <div class="stat-card">
+                <h3>Account Security</h3>
+                <p class="stat-label">Manage your password and security settings</p>
+                <div id="password-feedback" class="alert" style="display:none; margin-top:10px;"></div>
+                <div class="create-form"
+                    style="margin-top: 15px; background: transparent; padding: 0; box-shadow: none;">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="currentPassword" class="form-input"
+                            placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="newPassword" class="form-input" placeholder="Min 8 characters">
+                    </div>
+                    <button class="btn btn-secondary btn-full" onclick="updatePassword()">Update Password</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strictly separated Role logic: No "Become an Artist" button for Listeners anymore -->
+    </section>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchListenerStats();
+        });
+
+        async function fetchListenerStats() {
+            try {
+                const response = await fetch('/api/analytics/me/stats');
+                if (response.ok) {
+                    const res = await response.json();
+                    const stats = res.data.listenerStats;
+                    if (stats) {
+                        document.getElementById('listener-stats-container').style.display = 'grid';
+                        document.getElementById('stat-listening-time').textContent = stats.totalListeningTime;
+                        document.getElementById('stat-genres-count').textContent = stats.favoriteGenresCount;
+                        document.getElementById('stat-playlists-followed').textContent = stats.followedPlaylistsCount;
+
+                        if (stats.topGenres && stats.topGenres.length > 0) {
+                            document.getElementById('top-genres-container').style.display = 'block';
+                            const list = document.getElementById('top-genres-list');
+                            stats.topGenres.forEach(g => {
+                                const badge = document.createElement('span');
+                                badge.className = 'badge';
+                                badge.textContent = g;
+                                list.appendChild(badge);
+                            });
+                        }
+                    }
+                }
+            } catch (e) { console.error('Stats error:', e); }
+        }
+
+        async function updatePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const feedback = document.getElementById('password-feedback');
+
+            if (!currentPassword || !newPassword) return;
+
+            try {
+                const response = await fetch('/api/auth/password', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                const data = await response.json();
+
+                feedback.style.display = 'block';
+                feedback.className = 'alert ' + (data.success ? 'alert-success' : 'alert-error');
+                feedback.textContent = data.message;
+
+                if (data.success) {
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                }
+            } catch (e) {
+                feedback.style.display = 'block';
+                feedback.className = 'alert alert-error';
+                feedback.textContent = 'Connection error';
+            }
+        }
+    </script>
+</body>
+
+</html>

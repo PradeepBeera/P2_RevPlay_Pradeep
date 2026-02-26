@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Song</title>
+</head>
+
+<body>
+    <section th:if="${song}">
+        <div class="detail-header">
+            <div class="detail-cover-lg">
+                <img th:if="${song.coverImage}" th:src="${song.coverImage}" alt="">
+                <div th:unless="${song.coverImage}" class="cover-placeholder-lg"><i class="fas fa-music"></i></div>
+            </div>
+            <div class="detail-info">
+                <span class="detail-type">SONG</span>
+                <h1 th:text="${song.title}">Song Title</h1>
+                <a th:href="@{/artist/{id}(id=${song.artistId})}" class="detail-artist"
+                    th:text="${song.artistName}">Artist</a>
+                <span class="detail-meta">
+                    <span th:if="${song.genre}" th:text="${song.genre}">Genre</span>
+                    <span th:if="${song.releaseDate}"> · <span th:text="${song.releaseDate}">2024</span></span>
+                    <span> · <i class="fas fa-play"></i> <span th:text="${song.playCount}">0</span> plays</span>
+                </span>
+                <div class="detail-actions">
+                    <button class="btn btn-primary" th:data-id="${song.id}" th:data-title="${song.title}"
+                        th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                        th:data-cover="${song.coverImage}"
+                        onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                        <i class="fas fa-play"></i> Play
+                    </button>
+                    <button class="btn btn-outline" th:data-id="${song.id}" th:data-title="${song.title}"
+                        th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                        th:data-cover="${song.coverImage}"
+                        onclick="addToQueue(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                        <i class="fas fa-plus"></i> Queue
+                    </button>
+                    <button
+                        th:if="${currentUser != null and currentUser.artistProfile != null and currentUser.artistProfile.id == song.artistId}"
+                        class="btn btn-outline" style="color: #ef4444; border-color: #ef4444;" th:data-id="${song.id}"
+                        onclick="deleteSong(this.dataset.id)">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

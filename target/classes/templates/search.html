@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Search</title>
+</head>
+
+<body>
+    <section>
+        <h1 class="page-title">Search</h1>
+        <form th:action="@{/search}" method="get" class="search-form-lg">
+            <input type="text" name="query" th:value="${query}" placeholder="Search for songs, artists, or genres..."
+                class="search-input-lg" autofocus>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+        </form>
+
+        <div th:if="${artists != null and !artists.isEmpty()}" class="section">
+            <h2 class="section-title">Artists</h2>
+            <div class="artist-grid">
+                <a th:each="artist : ${artists}" th:href="@{/artist/{id}(id=${artist.id})}" class="artist-card">
+                    <div class="artist-avatar-lg">
+                        <img th:if="${artist.bannerImage}" th:src="${artist.bannerImage}" alt="">
+                        <i th:unless="${artist.bannerImage}" class="fas fa-user"></i>
+                    </div>
+                    <span class="artist-card-name" th:text="${artist.artistName}">Artist</span>
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${songs != null and !songs.getContent().isEmpty()}" class="section">
+            <h2 class="section-title">Songs</h2>
+            <div class="track-list">
+                <div th:each="song,iter : ${songs.content}" class="track-row" th:data-id="${song.id}"
+                    th:data-title="${song.title}" th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                    th:data-cover="${song.coverImage}"
+                    onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                    <span class="track-num" th:text="${iter.index + 1}">1</span>
+                    <div class="track-cover-sm">
+                        <img th:if="${song.coverImage}" th:src="${song.coverImage}" alt="">
+                        <div th:unless="${song.coverImage}" class="cover-placeholder-sm"><i class="fas fa-music"></i>
+                        </div>
+                    </div>
+                    <div class="track-info">
+                        <span class="track-title" th:text="${song.title}">Song</span>
+                        <span class="track-artist" th:text="${song.artistName}">Artist</span>
+                    </div>
+                    <span class="track-plays"><i class="fas fa-play"></i> <span
+                            th:text="${song.playCount}">0</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${query != null and (songs == null or songs.getContent().isEmpty()) and (artists == null or artists.isEmpty())}"
+            class="empty-state">
+            <i class="fas fa-search"></i>
+            <p>No results found for "<span th:text="${query}">query</span>"</p>
+        </div>
+    </section>
+</body>
+
+</html>

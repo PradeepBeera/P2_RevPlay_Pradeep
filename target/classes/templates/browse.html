@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Browse</title>
+</head>
+
+<body>
+    <section>
+        <h1 class="page-title">Browse Music</h1>
+        <div class="genre-filters">
+            <a th:href="@{/browse}" class="genre-chip active">All</a>
+            <a th:href="@{/search(query='Pop')}" class="genre-chip">Pop</a>
+            <a th:href="@{/search(query='Rock')}" class="genre-chip">Rock</a>
+            <a th:href="@{/search(query='Hip-Hop')}" class="genre-chip">Hip-Hop</a>
+            <a th:href="@{/search(query='Jazz')}" class="genre-chip">Jazz</a>
+            <a th:href="@{/search(query='Electronic')}" class="genre-chip">Electronic</a>
+            <a th:href="@{/search(query='R&B')}" class="genre-chip">R&B</a>
+            <a th:href="@{/search(query='Classical')}" class="genre-chip">Classical</a>
+            <a th:href="@{/search(query='Country')}" class="genre-chip">Country</a>
+        </div>
+        <div th:if="${songs != null}" class="song-grid">
+            <div th:each="song : ${songs.content}" class="song-card" th:data-id="${song.id}"
+                th:data-title="${song.title}" th:data-artist="${song.artistName}" th:data-url="${song.audioUrl}"
+                th:data-cover="${song.coverImage}"
+                onclick="playSong(+this.dataset.id, this.dataset.title, this.dataset.artist, this.dataset.url, this.dataset.cover)">
+                <div class="song-card-cover">
+                    <img th:if="${song.coverImage}" th:src="${song.coverImage}" alt="cover">
+                    <div th:unless="${song.coverImage}" class="cover-placeholder"><i class="fas fa-music"></i></div>
+                    <div class="play-overlay"><i class="fas fa-play"></i></div>
+                </div>
+                <div class="song-card-info">
+                    <span class="song-card-title" th:text="${song.title}">Song</span>
+                    <span class="song-card-artist" th:text="${song.artistName}">Artist</span>
+                    <span class="song-card-plays"><i class="fas fa-play"></i> <span
+                            th:text="${song.playCount}">0</span></span>
+                </div>
+            </div>
+        </div>
+        <div th:if="${songs != null and songs.totalPages > 1}" class="pagination">
+            <a th:if="${songs.number > 0}" th:href="@{/browse(page=${songs.number - 1})}"
+                class="btn btn-outline btn-sm">Previous</a>
+            <span class="page-info" th:text="'Page ' + (${songs.number} + 1) + ' of ' + ${songs.totalPages}">Page
+                1</span>
+            <a th:if="${songs.number < songs.totalPages - 1}" th:href="@{/browse(page=${songs.number + 1})}"
+                class="btn btn-outline btn-sm">Next</a>
+        </div>
+        <div th:if="${songs == null or songs.content.isEmpty()}" class="empty-state">
+            <i class="fas fa-music"></i>
+            <p>No songs found. Check back later!</p>
+        </div>
+    </section>
+</body>
+
+</html>

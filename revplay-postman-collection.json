@@ -1,0 +1,357 @@
+{
+  "info": {
+    "name": "RevPlay API",
+    "description": "Enterprise Music Streaming Platform API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"listener@revplay.com\",\n  \"username\": \"listener01\",\n  \"password\": \"password123\",\n  \"displayName\": \"Music Lover\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"listener@revplay.com\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var jsonData = pm.response.json();",
+                "if (jsonData.success) {",
+                "  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+                "  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+                "}"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/refresh",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/users/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/users/me",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"Updated Name\",\n  \"bio\": \"Music enthusiast\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Artists",
+      "item": [
+        {
+          "name": "Create Artist Profile",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/artists/profile",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"artistName\": \"DJ RevPlay\",\n  \"genre\": \"Electronic\",\n  \"instagram\": \"djrevplay\",\n  \"website\": \"https://revplay.dev\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get All Artists",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/artists",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Get Artist By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/artists/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Get Artist Songs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/artists/1/songs",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Songs",
+      "item": [
+        {
+          "name": "Upload Song",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/songs",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Summer Vibes", "type": "text" },
+                { "key": "genre", "value": "Pop", "type": "text" },
+                { "key": "visibility", "value": "PUBLIC", "type": "text" },
+                { "key": "audioFile", "type": "file", "src": "" },
+                { "key": "coverImage", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Public Songs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/songs?page=0&size=20"
+          }
+        },
+        {
+          "name": "Search Songs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/songs/search?query=summer&page=0&size=20"
+          }
+        },
+        {
+          "name": "Get Song By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/songs/1"
+          }
+        },
+        {
+          "name": "Get Songs By Genre",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/songs/genre/Pop?page=0&size=20"
+          }
+        },
+        {
+          "name": "Increment Play Count",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/songs/1/play"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Albums",
+      "item": [
+        {
+          "name": "Create Album",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/albums",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Summer Collection", "type": "text" },
+                { "key": "description", "value": "Best summer tracks", "type": "text" },
+                { "key": "coverImage", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Album By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/albums/1"
+          }
+        },
+        {
+          "name": "Get Albums By Artist",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/albums/artist/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Playlists",
+      "item": [
+        {
+          "name": "Create Playlist",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/playlists",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chill Vibes\",\n  \"description\": \"Relaxing tracks\",\n  \"privacy\": \"PRIVATE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Playlists",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/playlists/my",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Get Playlist By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/playlists/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Add Song to Playlist",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/playlists/1/songs?songId=1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Remove Song from Playlist",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/playlists/1/songs/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Reorder Playlist",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/playlists/1/reorder",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[2, 1, 3]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Player",
+      "item": [
+        {
+          "name": "Record Play History",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/player/history?songId=1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Get Listen History",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/player/history",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Toggle Favorite",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/player/favorites?songId=1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Get Favorites",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/player/favorites",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        },
+        {
+          "name": "Check Favorite",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/player/favorites/check/1",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get Artist Dashboard",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/analytics/dashboard",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }]
+          }
+        }
+      ]
+    }
+  ]
+}

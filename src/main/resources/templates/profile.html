@@ -48,27 +48,24 @@
             <div id="top-genres-list" class="badge-list" style="display:flex; gap:10px; margin-top:15px;"></div>
         </div>
 
-        <!-- Account Security Section: Refactored to not use stats-grid for better alignment -->
+        <!-- Account Security -->
         <div class="section">
-            <div class="stat-card" style="text-align: left; max-width: 600px;">
-                <h3 class="section-title">Account Security</h3>
-                <p class="stat-label">Manage your password and security settings</p>
+            <div class="song-card" style="max-width: 500px;">
+                <h3 style="margin-bottom: 10px;">Account Security</h3>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">Update your password
+                    regularly</p>
 
-                <div id="password-feedback" class="alert" style="display:none; margin-top:20px;"></div>
+                <div id="password-feedback" class="alert" style="display:none; margin-bottom: 15px;"></div>
 
-                <div class="create-form"
-                    style="margin-top: 20px; background: transparent; padding: 0; border: none; box-shadow: none;">
-                    <div class="form-group" style="width: 100%;">
-                        <label>Current Password</label>
-                        <input type="password" id="currentPassword" class="form-input"
-                            placeholder="Enter current password">
-                    </div>
-                    <div class="form-group" style="width: 100%;">
-                        <label>New Password</label>
-                        <input type="password" id="newPassword" class="form-input" placeholder="Min 8 characters">
-                    </div>
-                    <button class="btn btn-primary btn-full" onclick="updatePassword()">Update Password</button>
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPassword">
                 </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword">
+                </div>
+                <button class="btn btn-primary btn-full" onclick="updatePassword()">Update Password</button>
             </div>
         </div>
 

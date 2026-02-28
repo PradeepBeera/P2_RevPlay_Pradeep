@@ -25,7 +25,7 @@ function createPlaylist() {
     })
         .then(r => r.json())
         .then(data => {
-            if (data.success) window.location.reload();
+            if (data.success) softReload();
         });
 }
 
@@ -37,7 +37,7 @@ function removeFromPlaylist(playlistId, songId) {
     })
         .then(r => r.json())
         .then(data => {
-            if (data.success) window.location.reload();
+            if (data.success) softReload();
         });
 }
 
@@ -66,7 +66,7 @@ function createAlbum() {
     })
         .then(r => r.json())
         .then(data => {
-            if (data.success) window.location.reload();
+            if (data.success) softReload();
         });
 }
 
@@ -144,7 +144,21 @@ function createArtistProfile() {
         .then(r => r.json())
         .then(data => {
             if (data.success) {
-                window.location.href = '/dashboard';
+                navigateTo('/dashboard');
             }
         });
+}
+// Re-initialize any page-specific logic after an AJAX navigation
+document.addEventListener('page-changed', function (e) {
+    console.log('Page changed via AJAX:', e.detail.url);
+    // Any global UI re-init (sidebar highlitght, etc.)
+});
+
+// Replace window.location.reload() with navigateTo() if available
+function softReload() {
+    if (typeof navigateTo === 'function') {
+        navigateTo(window.location.pathname);
+    } else {
+        window.location.reload();
+    }
 }

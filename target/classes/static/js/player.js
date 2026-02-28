@@ -231,7 +231,7 @@ function deleteSong(songId) {
             .then(response => {
                 if (response.ok) {
                     alert("Song deleted successfully!");
-                    location.reload();
+                    softReload();
                 } else {
                     alert("Error deleting song. You might not have permission.");
                 }

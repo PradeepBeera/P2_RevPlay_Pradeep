@@ -16,10 +16,6 @@
 <body>
     <div class="app-container">
         <nav class="sidebar" id="sidebar">
-            <div class="sidebar-brand">
-                <i class="fas fa-compact-disc brand-icon"></i>
-                <span class="brand-text">RevPlay</span>
-            </div>
             <div class="sidebar-nav">
                 <!-- Navigation for Listeners & Guest Users -->
                 <div th:unless="${isArtist}">
@@ -74,18 +70,42 @@
 
         <main class="main-content">
             <header class="top-bar">
-                <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <div class="top-bar-left">
+                    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="auth-brand">
+                        <span class="brand-text">RevPlay</span>
+                    </div>
+                </div>
+
                 <div class="search-bar-mini">
                     <form th:action="@{/search}" method="get">
                         <i class="fas fa-search"></i>
-                        <input type="text" name="query" placeholder="Search songs, artists...">
+                        <input type="text" name="query" placeholder="Search music...">
                     </form>
+                </div>
+
+                <div class="top-bar-right">
+                    <div th:if="${currentUser}" class="top-user-pill">
+                        <a th:href="@{/my/profile}" class="user-pill-link">
+                            <div class="pill-avatar">
+                                <img th:if="${currentUser.profilePicture}" th:src="${currentUser.profilePicture}"
+                                    alt="">
+                                <i th:unless="${currentUser.profilePicture}" class="fas fa-user"></i>
+                            </div>
+                            <span th:text="${currentUser.username}">User</span>
+                        </a>
+                        <a th:href="@{/logout}" class="icon-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+                    </div>
+                    <div th:unless="${currentUser}" class="top-auth-btns">
+                        <a th:href="@{/login}" class="btn btn-outline btn-sm">Sign In</a>
+                        <a th:href="@{/register}" class="btn btn-primary btn-sm">Sign Up</a>
+                    </div>
                 </div>
             </header>
 
-            <div class="page-content" th:insert="${content}">
+            <div id="main-content-area" class="page-content" th:insert="${content}">
             </div>
 
             <!-- Minimal, clean footer for a professional look -->
@@ -154,6 +174,7 @@
     </div>
 
     <audio id="audio-element"></audio>
+    <script th:src="@{/js/nav.js}"></script>
     <script th:src="@{/js/player.js}"></script>
     <script th:src="@{/js/app.js}"></script>
 </body>

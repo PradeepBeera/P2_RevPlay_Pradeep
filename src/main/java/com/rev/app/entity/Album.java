@@ -23,7 +23,7 @@ public class Album {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String description;
 
     private LocalDate releaseDate;

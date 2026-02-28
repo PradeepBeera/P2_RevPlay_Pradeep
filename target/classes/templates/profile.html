@@ -8,10 +8,24 @@
 <body>
     <section th:if="${profile}">
         <h1 class="page-title">My Profile</h1>
-        </div>
+
+        <!-- Profile Overview Card -->
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <img th:if="${profile.profilePicture}" th:src="${profile.profilePicture}" alt="avatar">
+                <i th:unless="${profile.profilePicture}" class="fas fa-user"></i>
+            </div>
+            <div class="profile-details">
+                <h2 th:text="${profile.displayName ?: profile.username}">Username</h2>
+                <p class="profile-email" th:text="${profile.email}">email@example.com</p>
+                <div class="badge" th:text="${profile.role}">LISTENER</div>
+                <span class="profile-joined"
+                    th:text="${'Member since ' + #temporals.format(profile.createdAt, 'MMMM yyyy')}">Joined Date</span>
+            </div>
         </div>
 
-        <div id="listener-stats-container" class="section stats-grid" style="margin-top: 30px; display: none;">
+        <!-- Hidden containers that show up via JS if stats exist -->
+        <div id="listener-stats-container" class="section stats-grid" style="display: none;">
             <div class="stat-card">
                 <div class="stat-icon"><i class="fas fa-headphones"></i></div>
                 <div id="stat-listening-time" class="stat-value">0</div>
@@ -28,27 +42,32 @@
                 <div class="stat-label">Playlists Followed</div>
             </div>
         </div>
-        <div id="top-genres-container" class="section" style="display: none;">
-            <h3>Your Top Genres</h3>
-            <div id="top-genres-list" class="badge-list" style="display:flex; gap:10px; margin-top:10px;"></div>
+
+        <div id="top-genres-container" class="section" style="display: none; margin-bottom: 30px;">
+            <h3 class="section-title">Your Top Genres</h3>
+            <div id="top-genres-list" class="badge-list" style="display:flex; gap:10px; margin-top:15px;"></div>
         </div>
-        <div class="section stats-grid" style="margin-top: 30px;">
-            <div class="stat-card">
-                <h3>Account Security</h3>
+
+        <!-- Account Security Section: Refactored to not use stats-grid for better alignment -->
+        <div class="section">
+            <div class="stat-card" style="text-align: left; max-width: 600px;">
+                <h3 class="section-title">Account Security</h3>
                 <p class="stat-label">Manage your password and security settings</p>
-                <div id="password-feedback" class="alert" style="display:none; margin-top:10px;"></div>
+
+                <div id="password-feedback" class="alert" style="display:none; margin-top:20px;"></div>
+
                 <div class="create-form"
-                    style="margin-top: 15px; background: transparent; padding: 0; box-shadow: none;">
-                    <div class="form-group">
+                    style="margin-top: 20px; background: transparent; padding: 0; border: none; box-shadow: none;">
+                    <div class="form-group" style="width: 100%;">
                         <label>Current Password</label>
                         <input type="password" id="currentPassword" class="form-input"
                             placeholder="Enter current password">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="width: 100%;">
                         <label>New Password</label>
                         <input type="password" id="newPassword" class="form-input" placeholder="Min 8 characters">
                     </div>
-                    <button class="btn btn-secondary btn-full" onclick="updatePassword()">Update Password</button>
+                    <button class="btn btn-primary btn-full" onclick="updatePassword()">Update Password</button>
                 </div>
             </div>
         </div>

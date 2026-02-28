@@ -25,7 +25,7 @@ public class Podcast {
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Column(columnDefinition = "CLOB")
+    @Lob
     private String description;
 
     @Column(length = 500)

@@ -7,7 +7,7 @@ spring:
   application:
     name: RevPlay
   profiles:
-    active: dev
+    active: oracle
   servlet:
     multipart:
       enabled: true

@@ -25,7 +25,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "user_name", nullable = false, unique = true, length = 50)
     private String username;
 
     @Column(nullable = false)
@@ -38,7 +38,7 @@ public class User {
     @Column(length = 100)
     private String displayName;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String bio;
 
     @Column(length = 500)

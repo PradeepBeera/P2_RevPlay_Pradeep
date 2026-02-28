@@ -18,10 +18,10 @@ public interface HistoryRepository extends JpaRepository<ListeningHistory, Long>
                         "GROUP BY h.user.id ORDER BY COUNT(h) DESC")
         List<Object[]> findTopListenersByArtist(@Param("artistId") Long artistId, Pageable pageable);
 
-        @Query(value = "SELECT FORMATDATETIME(played_at, 'yyyy-MM-dd') as play_date, COUNT(*) as plays " +
+        @Query(value = "SELECT TO_CHAR(played_at, 'YYYY-MM-DD') as play_date, COUNT(*) as plays " +
                         "FROM listening_history h " +
                         "JOIN songs s ON h.song_id = s.id " +
-                        "WHERE s.artist_id = :artistId AND h.played_at >= DATEADD('DAY', -:days, CURRENT_DATE) " +
-                        "GROUP BY play_date ORDER BY play_date ASC", nativeQuery = true)
+                        "WHERE s.artist_id = :artistId AND h.played_at >= CURRENT_DATE - :days " +
+                        "GROUP BY TO_CHAR(played_at, 'YYYY-MM-DD') ORDER BY play_date ASC", nativeQuery = true)
         List<Object[]> getPlayTrends(@Param("artistId") Long artistId, @Param("days") int days);
 }

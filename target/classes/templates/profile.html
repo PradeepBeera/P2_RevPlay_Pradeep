@@ -7,69 +7,79 @@
 
 <body>
     <section th:if="${profile}">
-        <h1 class="page-title">My Profile</h1>
-
-        <!-- Profile Overview Card -->
-        <div class="profile-card">
-            <div class="profile-avatar">
-                <img th:if="${profile.profilePicture}" th:src="${profile.profilePicture}" alt="avatar">
-                <i th:unless="${profile.profilePicture}" class="fas fa-user"></i>
-            </div>
-            <div class="profile-details">
-                <h2 th:text="${profile.displayName ?: profile.username}">Username</h2>
-                <p class="profile-email" th:text="${profile.email}">email@example.com</p>
-                <div class="badge" th:text="${profile.role}">LISTENER</div>
-                <span class="profile-joined"
-                    th:text="${'Member since ' + #temporals.format(profile.createdAt, 'MMMM yyyy')}">Joined Date</span>
-            </div>
+        <div class="section-header" style="margin-bottom: 32px;">
+            <h1 class="page-title">My Profile</h1>
+            <p style="color: var(--text-muted);">Manage your account and view your listening habits.</p>
         </div>
 
-        <!-- Hidden containers that show up via JS if stats exist -->
-        <div id="listener-stats-container" class="section stats-grid" style="display: none;">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-headphones"></i></div>
-                <div id="stat-listening-time" class="stat-value">0</div>
-                <div class="stat-label">Min Listened</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-compact-disc"></i></div>
-                <div id="stat-genres-count" class="stat-value">0</div>
-                <div class="stat-label">Genres Explored</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
-                <div id="stat-playlists-followed" class="stat-value">0</div>
-                <div class="stat-label">Playlists Followed</div>
-            </div>
-        </div>
-
-        <div id="top-genres-container" class="section" style="display: none; margin-bottom: 30px;">
-            <h3 class="section-title">Your Top Genres</h3>
-            <div id="top-genres-list" class="badge-list" style="display:flex; gap:10px; margin-top:15px;"></div>
-        </div>
-
-        <!-- Account Security -->
-        <div class="section">
-            <div class="song-card" style="max-width: 500px;">
-                <h3 style="margin-bottom: 10px;">Account Security</h3>
-                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">Update your password
-                    regularly</p>
-
-                <div id="password-feedback" class="alert" style="display:none; margin-bottom: 15px;"></div>
-
-                <div class="form-group">
-                    <label>Current Password</label>
-                    <input type="password" id="currentPassword">
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; align-items: start;">
+            <!-- Left Column: User Info -->
+            <div class="stat-card" style="margin: 0;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div
+                        style="width: 80px; height: 80px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; overflow: hidden;">
+                        <img th:if="${profile.profilePicture}" th:src="${profile.profilePicture}" alt="avatar"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                        <i th:unless="${profile.profilePicture}" class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: 700;"
+                            th:text="${profile.displayName ?: profile.username}">User</h2>
+                        <p style="color: var(--text-muted); font-size: 14px;" th:text="${profile.email}">
+                            email@example.com</p>
+                        <div style="margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--primary); background: rgba(59, 130, 246, 0.1); padding: 4px 12px; border-radius: 20px; display: inline-block;"
+                            th:text="${profile.role}">ROLE</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>New Password</label>
-                    <input type="password" id="newPassword">
+            </div>
+
+            <!-- Right Column: Account Security -->
+            <div class="stat-card" style="margin: 0;">
+                <h3 style="margin-bottom: 8px;">Account Security</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Change your password here.
+                </p>
+
+                <div id="password-feedback" class="alert" style="display:none; margin-bottom: 16px;"></div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label
+                        style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block;">Current
+                        Password</label>
+                    <input type="password" id="currentPassword" class="form-input" placeholder="Current password"
+                        style="width: 100%; background: var(--bg-main); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius); color: white;">
+                </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block;">New
+                        Password</label>
+                    <input type="password" id="newPassword" class="form-input" placeholder="Min 8 characters"
+                        style="width: 100%; background: var(--bg-main); border: 1px solid var(--border); padding: 10px; border-radius: var(--radius); color: white;">
                 </div>
                 <button class="btn btn-primary btn-full" onclick="updatePassword()">Update Password</button>
             </div>
         </div>
 
-        <!-- Strictly separated Role logic: No "Become an Artist" button for Listeners anymore -->
+        <!-- Listening Habits (Only for listeners) -->
+        <div id="listener-stats-container" style="display: none; margin-top: 48px;">
+            <h2 style="margin-bottom: 24px;">Listening Habits</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-clock stat-icon"></i>
+                    <div id="stat-listening-time" class="stat-value">0</div>
+                    <div class="stat-label">Min Listened</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-compact-disc stat-icon"></i>
+                    <div id="stat-genres-count" class="stat-value">0</div>
+                    <div class="stat-label">Genres Explored</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-list stat-icon"></i>
+                    <div id="stat-playlists-followed" class="stat-value">0</div>
+                    <div class="stat-label">Playlists</div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <script th:inline="javascript">

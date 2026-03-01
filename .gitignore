@@ -1,6 +1,5 @@
 src/main/java/com/rev/app/config
 src/main/java/com/rev/app/exception
-src/main/java/com/rev/app/util
 .idea
 *.class
 

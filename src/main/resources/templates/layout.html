@@ -15,13 +15,31 @@
 
 <body>
     <div class="app-container">
+        <!-- New Fixed Top Bar (Navbar) -->
+        <header class="top-bar">
+            <div class="sidebar-brand">
+                <span class="brand-text">RevPlay</span>
+            </div>
+
+            <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="search-bar-mini">
+                <form th:action="@{/search}" method="get">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="query" placeholder="Search music...">
+                </form>
+            </div>
+        </header>
+
+        <!-- Sidebar - Now extends fully to bottom -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-nav">
-                <!-- Navigation for Listeners & Guest Users -->
+                <!-- Navigation for Listeners -->
                 <div th:unless="${isArtist}">
                     <a th:href="@{/}" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
                     <a th:href="@{/browse}" class="nav-item"><i class="fas fa-compass"></i><span>Browse</span></a>
-                    <a th:href="@{/podcasts}" class="nav-item"><i class="fas fa-podcast"></i><span>Podcasts</span></a>
                     <a th:href="@{/search}" class="nav-item"><i class="fas fa-search"></i><span>Search</span></a>
 
                     <div th:if="${currentUser}" class="nav-section">
@@ -35,29 +53,26 @@
                     </div>
                 </div>
 
-                <!-- Navigation strictly for Artists -->
+                <!-- Navigation for Artists -->
                 <div th:if="${isArtist}" class="nav-section">
-                    <span class="nav-section-title">Artist Control Panel</span>
-                    <a th:href="@{/dashboard}" class="nav-item"><i class="fas fa-chart-line"></i><span>Artist
-                            Dashboard</span></a>
-                    <a th:href="@{/dashboard/upload}" class="nav-item"><i class="fas fa-upload"></i><span>Upload
-                            Songs</span></a>
-                    <a th:href="@{/dashboard/albums}" class="nav-item"><i class="fas fa-record-vinyl"></i><span>Manage
-                            Albums</span></a>
+                    <span class="nav-section-title">Artist Panel</span>
+                    <a th:href="@{/dashboard}" class="nav-item"><i
+                            class="fas fa-chart-line"></i><span>Dashboard</span></a>
+                    <a th:href="@{/dashboard/upload}" class="nav-item"><i
+                            class="fas fa-upload"></i><span>Upload</span></a>
+                    <a th:href="@{/dashboard/albums}" class="nav-item"><i
+                            class="fas fa-record-vinyl"></i><span>Albums</span></a>
                 </div>
             </div>
 
             <div class="sidebar-footer">
                 <div th:if="${currentUser}" class="user-card">
-                    <div class="user-avatar">
-                        <img th:if="${currentUser.profilePicture}" th:src="${currentUser.profilePicture}" alt="avatar">
-                        <i th:unless="${currentUser.profilePicture}" class="fas fa-user"></i>
-                    </div>
                     <div class="user-info">
                         <span class="user-name" th:text="${currentUser.displayName ?: currentUser.username}">User</span>
                         <span class="user-role" th:text="${currentUser.role}">LISTENER</span>
                     </div>
-                    <a th:href="@{/my/profile}" class="user-settings" title="Profile"><i class="fas fa-cog"></i></a>
+                    <a th:href="@{/my/profile}" class="user-settings" title="Profile"><i
+                            class="fas fa-user-circle"></i></a>
                     <a th:href="@{/logout}" class="user-settings" title="Logout" style="margin-left: 10px;"><i
                             class="fas fa-sign-out-alt"></i></a>
                 </div>
@@ -69,41 +84,6 @@
         </nav>
 
         <main class="main-content">
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="auth-brand">
-                        <span class="brand-text">RevPlay</span>
-                    </div>
-                </div>
-
-                <div class="search-bar-mini">
-                    <form th:action="@{/search}" method="get">
-                        <i class="fas fa-search"></i>
-                        <input type="text" name="query" placeholder="Search music...">
-                    </form>
-                </div>
-
-                <div class="top-bar-right">
-                    <div th:if="${currentUser}" class="top-user-pill">
-                        <a th:href="@{/my/profile}" class="user-pill-link">
-                            <div class="pill-avatar">
-                                <img th:if="${currentUser.profilePicture}" th:src="${currentUser.profilePicture}"
-                                    alt="">
-                                <i th:unless="${currentUser.profilePicture}" class="fas fa-user"></i>
-                            </div>
-                            <span th:text="${currentUser.username}">User</span>
-                        </a>
-                        <a th:href="@{/logout}" class="icon-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
-                    </div>
-                    <div th:unless="${currentUser}" class="top-auth-btns">
-                        <a th:href="@{/login}" class="btn btn-outline btn-sm">Sign In</a>
-                        <a th:href="@{/register}" class="btn btn-primary btn-sm">Sign Up</a>
-                    </div>
-                </div>
-            </header>
 
             <div id="main-content-area" class="page-content" th:insert="${content}">
             </div>

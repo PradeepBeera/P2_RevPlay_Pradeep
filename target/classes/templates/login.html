@@ -12,53 +12,74 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 
 <body class="auth-body">
-    <div class="auth-card">
-        <div class="auth-brand">
-            <span class="brand-text">RevPlay</span>
-        </div>
+    <div class="auth-container">
+        <!-- Landing Page / Auth Card -->
+        <div class="auth-card">
+            <div class="auth-brand">
+                <h1>RevPlay</h1>
+                <p>Premium Music Experience</p>
+            </div>
 
-        <!-- Portal Selection -->
-        <div id="portal-section">
-            <h2 style="margin-bottom: 10px;">Welcome Back</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 30px;">Choose your portal to continue</p>
-
-            <button class="btn btn-primary btn-full" onclick="selectRole('listener')"
-                style="margin-bottom: 12px;">Listener Portal</button>
-            <button class="btn btn-outline btn-full" onclick="selectRole('artist')">Artist Portal</button>
-        </div>
-
-        <!-- Login Form -->
-        <div id="login-section" style="display: none;">
-            <h2 id="login-title" style="margin-bottom: 20px;">Sign In</h2>
-
-            <div th:if="${param.error}" class="alert alert-error" style="color: #ef4444; margin-bottom: 15px;">Invalid
-                email or password.</div>
-            <div th:if="${param.logout}" class="alert alert-success" style="color: #22c55e; margin-bottom: 15px;">Logged
-                out.</div>
-
-            <form id="login-form" th:action="@{/login}" method="post">
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" name="email" required>
+            <!-- Portal Selection Section (Landing State) -->
+            <div id="portal-section">
+                <p class="auth-subtitle">Choose your portal to continue</p>
+                <div class="portal-choice">
+                    <!-- Listener Portal Option -->
+                    <div class="choice-card" onclick="selectRole('listener')">
+                        <i class="fas fa-headphones"
+                            style="font-size: 32px; color: var(--primary); margin-bottom: 15px; display: block;"></i>
+                        <h3>Listener</h3>
+                        <p>Stream and discover music</p>
+                    </div>
+                    <!-- Artist Portal Option -->
+                    <div class="choice-card" onclick="selectRole('artist')">
+                        <i class="fas fa-music"
+                            style="font-size: 32px; color: var(--primary); margin-bottom: 15px; display: block;"></i>
+                        <h3>Artist</h3>
+                        <p>Upload and track your songs</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" required>
-                </div>
-                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" id="remember-me" name="remember-me" style="width: auto;">
-                    <label for="remember-me" style="margin: 0;">Remember Me</label>
-                </div>
+            </div>
 
-                <button type="submit" class="btn btn-primary btn-full">Sign In</button>
-                <button type="button" class="btn btn-outline btn-full" style="margin-top: 10px;"
-                    onclick="goBack()">Back</button>
-            </form>
+            <!-- Login Form Section -->
+            <div id="login-section" style="display: none; margin-top: 30px;">
+                <h2 id="login-title">Sign In</h2>
+                <p id="login-subtitle" class="auth-subtitle">Please enter your details</p>
+
+                <!-- Feedback -->
+                <div th:if="${param.error}" class="alert alert-error"
+                    style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px; border-radius: var(--radius); margin-bottom: 20px;">
+                    Invalid credentials.</div>
+
+                <form id="login-form" th:action="@{/login}" method="post">
+                    <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+                        <label>Email Address</label>
+                        <input type="email" name="email" class="form-input" required placeholder="name@example.com"
+                            style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                    </div>
+                    <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-input" required placeholder="Your password"
+                            style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+                        <input type="checkbox" id="remember-me" name="remember-me">
+                        <label for="remember-me" style="font-size: 14px; color: var(--text-muted);">Remember Me</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                    <a href="javascript:void(0)" onclick="goBack()"
+                        style="display: block; margin-top: 15px; font-size: 14px; color: var(--text-muted);">Back to
+                        Portals</a>
+                </form>
+            </div>
+
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
+                <p style="color: var(--text-muted); font-size: 14px;">New to RevPlay? <a id="register-link"
+                        th:href="@{/register}" style="color: var(--primary); font-weight: 600;">Join now</a></p>
+            </div>
         </div>
-
-        <p style="margin-top: 30px; text-align: center; color: var(--text-secondary); font-size: 14px;">
-            New here? <a th:href="@{/register}" style="color: var(--accent); font-weight: 600;">Create Account</a>
-        </p>
     </div>
 
     <!-- Password Recovery Modal (Hidden by default) -->

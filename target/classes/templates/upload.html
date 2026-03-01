@@ -7,69 +7,83 @@
 
 <body>
     <section>
-        <h1 class="page-title">Upload Song</h1>
-        <div id="upload-status" class="alert" style="display:none;"></div>
-        <form id="upload-form" class="upload-form" onsubmit="handleUpload(event)">
-            <div class="form-group">
-                <label for="title">Song Title *</label>
-                <input type="text" id="title" name="title" required placeholder="Enter song title" class="form-input">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="genre">Genre</label>
-                    <select id="genre" name="genre" class="form-input">
-                        <option value="">Select genre</option>
-                        <option value="Pop">Pop</option>
-                        <option value="Rock">Rock</option>
-                        <option value="Hip-Hop">Hip-Hop</option>
-                        <option value="R&B">R&B</option>
-                        <option value="Jazz">Jazz</option>
-                        <option value="Electronic">Electronic</option>
-                        <option value="Classical">Classical</option>
-                        <option value="Country">Country</option>
-                        <option value="Indie">Indie</option>
-                        <option value="Metal">Metal</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="visibility">Visibility</label>
-                    <select id="visibility" name="visibility" class="form-input">
-                        <option value="PUBLIC">Public</option>
-                        <option value="UNLISTED">Unlisted</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="albumId">Album (optional)</label>
-                <select id="albumId" name="albumId" class="form-input">
-                    <option value="">No album</option>
-                    <option th:each="album : ${albums}" th:value="${album.id}" th:text="${album.name}">Album</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group file-group">
-                    <label>Audio File *</label>
-                    <div class="file-upload" onclick="document.getElementById('audioFile').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <span id="audio-label">Choose audio file (MP3, WAV)</span>
-                        <input type="file" id="audioFile" name="audioFile" accept="audio/*" required
-                            onchange="updateFileLabel('audioFile', 'audio-label')" hidden>
+        <div class="section-header" style="margin-bottom: 32px;">
+            <h1 class="page-title">Upload New Song</h1>
+            <p style="color: var(--text-muted); font-size: 14px;">Share your latest music with the community.</p>
+        </div>
+
+        <div id="upload-status" class="alert" style="display:none; margin-bottom: 24px;"></div>
+
+        <div class="stat-card" style="max-width: 800px; margin: 0 auto;">
+            <form id="upload-form" onsubmit="handleUpload(event)">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                    <!-- Left Column: Basic Info -->
+                    <div>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label
+                                style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: block;">Song
+                                Title *</label>
+                            <input type="text" id="title" name="title" required placeholder="Name your track"
+                                style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label
+                                style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: block;">Genre</label>
+                            <select id="genre" name="genre"
+                                style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                                <option value="">Select genre</option>
+                                <option value="Pop">Pop</option>
+                                <option value="Rock">Rock</option>
+                                <option value="Hip-Hop">Hip-Hop</option>
+                                <option value="Electronic">Electronic</option>
+                                <option value="Jazz">Jazz</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Files -->
+                    <div>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label
+                                style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: block;">Audio
+                                File (MP3/WAV) *</label>
+                            <div style="padding: 20px; border: 2px dashed var(--border); border-radius: var(--radius); text-align: center; cursor: pointer;"
+                                onclick="document.getElementById('audioFile').click()">
+                                <i class="fas fa-file-audio"
+                                    style="font-size: 24px; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+                                <span id="audio-label" style="font-size: 13px; color: var(--text-muted);">Click to
+                                    select</span>
+                                <input type="file" id="audioFile" name="audioFile" accept="audio/*" required
+                                    onchange="updateFileLabel('audioFile', 'audio-label')" hidden>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label
+                                style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: block;">Cover
+                                Art</label>
+                            <div style="padding: 20px; border: 2px dashed var(--border); border-radius: var(--radius); text-align: center; cursor: pointer;"
+                                onclick="document.getElementById('coverImage').click()">
+                                <i class="fas fa-image"
+                                    style="font-size: 24px; color: var(--text-muted); margin-bottom: 8px; display: block;"></i>
+                                <span id="cover-label" style="font-size: 13px; color: var(--text-muted);">Optional
+                                    image</span>
+                                <input type="file" id="coverImage" name="coverImage" accept="image/*"
+                                    onchange="updateFileLabel('coverImage', 'cover-label')" hidden>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group file-group">
-                    <label>Cover Image</label>
-                    <div class="file-upload" onclick="document.getElementById('coverImage').click()">
-                        <i class="fas fa-image"></i>
-                        <span id="cover-label">Choose cover image</span>
-                        <input type="file" id="coverImage" name="coverImage" accept="image/*"
-                            onchange="updateFileLabel('coverImage', 'cover-label')" hidden>
-                    </div>
+
+                <div
+                    style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); text-align: right;">
+                    <button type="submit" class="btn btn-primary" id="upload-btn" style="padding: 12px 32px;">
+                        <i class="fas fa-upload"></i> Upload Track
+                    </button>
                 </div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-lg btn-full" id="upload-btn">
-                <i class="fas fa-upload"></i> Upload Song
-            </button>
-        </form>
+            </form>
+        </div>
     </section>
 </body>
 

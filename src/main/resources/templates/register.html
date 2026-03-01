@@ -12,57 +12,96 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 
 <body class="auth-body">
-    <div class="auth-card">
-        <div class="auth-brand">
-            <span class="brand-text">RevPlay</span>
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- App Branding -->
+            <div class="auth-brand">
+                <h1>RevPlay</h1>
+                <p>Premium Music Experience</p>
+            </div>
+
+            <h2>Create Account</h2>
+            <p id="reg-subtitle" class="auth-subtitle">Join us to start your music journey</p>
+
+            <div id="role-badge"
+                style="display:inline-block; margin-bottom: 24px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                Account Type
+            </div>
+
+            <!-- Dynamic Error Feedback -->
+            <div id="auth-error" class="alert alert-error"
+                style="display:none; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px; border-radius: var(--radius); margin-bottom: 20px;">
+            </div>
+
+            <!-- Registration Form -->
+            <form id="register-form" onsubmit="handleRegister(event)">
+                <input type="hidden" id="role" name="role" value="LISTENER">
+
+                <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+                    <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block;">Email
+                        Address</label>
+                    <input type="email" id="email" name="email" class="form-input" required
+                        placeholder="name@example.com"
+                        style="width: 100%; padding: 10px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                </div>
+
+                <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+                    <label
+                        style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block;">Username</label>
+                    <input type="text" id="username" name="username" class="form-input" required
+                        placeholder="Choose a username" minlength="3"
+                        style="width: 100%; padding: 10px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                </div>
+
+                <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+                    <label
+                        style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block;">Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required
+                        placeholder="Min 8 characters" minlength="8"
+                        style="width: 100%; padding: 10px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                </div>
+
+                <!-- Security Question Section -->
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+                    <p style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Account Recovery</p>
+
+                    <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+                        <label
+                            style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block;">Security
+                            Question</label>
+                        <select id="securityQuestion" name="securityQuestion" required
+                            style="width: 100%; padding: 10px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                            <option value="">Select a question...</option>
+                            <option value="What was the name of your first pet?">What was the name of your first pet?
+                            </option>
+                            <option value="In what city were you born?">In what city were you born?</option>
+                            <option value="What is your mother's maiden name?">What is your mother's maiden name?
+                            </option>
+                            <option value="What was the make and model of your first car?">What was the make and model
+                                of your first car?</option>
+                            <option value="What was the name of your elementary school?">What was the name of your
+                                elementary school?</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="text-align: left; margin-bottom: 24px;">
+                        <label
+                            style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block;">Your
+                            Answer</label>
+                        <input type="text" id="securityAnswer" name="securityAnswer" required
+                            placeholder="Answer for recovery"
+                            style="width: 100%; padding: 10px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full" id="register-btn">Create Account</button>
+            </form>
+
+            <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
+                <p style="color: var(--text-muted); font-size: 14px;">Already have an account? <a th:href="@{/login}"
+                        style="color: var(--primary); font-weight: 600;">Sign In</a></p>
+            </div>
         </div>
-
-        <h2 style="margin-bottom: 5px;">Create Account</h2>
-        <p id="reg-subtitle" style="color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">Join our
-            community today</p>
-
-        <div id="role-badge"
-            style="display:inline-block; margin-bottom: 20px; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; background: var(--accent); color: #fff;">
-            Listener Account
-        </div>
-
-        <!-- Registration Form -->
-        <form id="register-form" onsubmit="handleRegister(event)">
-            <input type="hidden" id="role" name="role" value="LISTENER">
-            <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" name="username" required minlength="3">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" name="password" required minlength="8">
-            </div>
-
-            <!-- Recovery Section -->
-            <div class="form-group" style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
-                <label>Security Question</label>
-                <select id="securityQuestion" name="securityQuestion" required>
-                    <option value="">Select a question...</option>
-                    <option value="First pet?">First pet?</option>
-                    <option value="Birth city?">Birth city?</option>
-                    <option value="Mother's maiden name?">Mother's maiden name?</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Answer</label>
-                <input type="text" id="securityAnswer" name="securityAnswer" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-        </form>
-
-        <p style="margin-top: 25px; text-align: center; color: var(--text-secondary); font-size: 14px;">
-            Already have an account? <a th:href="@{/login}" style="color: var(--accent); font-weight: 600;">Sign In</a>
-        </p>
     </div>
     <script>
         // When the page loads, check if we have a 'role' in the URL (e.g., ?role=ARTIST)

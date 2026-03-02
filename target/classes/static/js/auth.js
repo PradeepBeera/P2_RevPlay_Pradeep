@@ -12,17 +12,18 @@ function handleRegister(event) {
     btn.textContent = 'Creating account...';
 
     // 3. Collect all the data from the input fields
+    const displayNameElem = document.getElementById('displayName');
     const payload = {
         email: document.getElementById('email').value,
         username: document.getElementById('username').value,
-        displayName: document.getElementById('displayName').value,
+        displayName: displayNameElem ? displayNameElem.value : '', // Handle missing element
         password: document.getElementById('password').value,
         securityQuestion: document.getElementById('securityQuestion').value,
         securityAnswer: document.getElementById('securityAnswer').value,
-        role: document.getElementById('role').value || 'LISTENER' // Read role from the hidden input field
+        role: document.getElementById('role').value || 'LISTENER'
     };
 
-    console.log('Sending registration payload:', payload); // Debug log
+    console.log('Sending registration payload:', payload);
 
     // 4. Send a POST request to our Server API
     fetch('/api/auth/register', {

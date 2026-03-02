@@ -49,18 +49,26 @@
                 <!-- Feedback -->
                 <div th:if="${param.error}" class="alert alert-error"
                     style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 10px; border-radius: var(--radius); margin-bottom: 20px;">
-                    Invalid credentials.</div>
+                    <span th:if="${param.error[0] == 'mismatch_artist'}">Invalid login for Artist account.</span>
+                    <span th:if="${param.error[0] == 'mismatch_listener'}">Invalid login for Listener account.</span>
+                    <span th:if="${param.error[0] == 'true'}">Invalid credentials.</span>
+                </div>
 
                 <form id="login-form" th:action="@{/login}" method="post">
+                    <input type="hidden" name="intendedRole" id="intendedRole" value="LISTENER">
                     <div class="form-group" style="text-align: left; margin-bottom: 16px;">
                         <label>Email Address</label>
-                        <input type="email" name="email" class="form-input" required placeholder="name@example.com"
-                            style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                        <input type="email" id="email" name="email" class="form-input" required
+                            placeholder="name@example.com"
+                            style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;"
+                            autocomplete="off">
                     </div>
                     <div class="form-group" style="text-align: left; margin-bottom: 16px;">
                         <label>Password</label>
-                        <input type="password" name="password" class="form-input" required placeholder="Your password"
-                            style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;">
+                        <input type="password" id="password" name="password" class="form-input" required
+                            placeholder="Your password"
+                            style="width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius); color: white;"
+                            autocomplete="new-password">
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
@@ -133,19 +141,24 @@
             document.getElementById('portal-section').style.display = 'none';
             document.getElementById('login-section').style.display = 'block';
 
+            // Requirement: Clear login fields when entering a portal
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+
             const title = document.getElementById('login-title');
             const subtitle = document.getElementById('login-subtitle');
             const regLink = document.getElementById('register-link');
+            const intendedRoleInput = document.getElementById('intendedRole');
 
             if (role === 'artist') {
                 title.textContent = 'Artist Dashboard';
                 subtitle.textContent = 'Sign in to access creator analytics and uploads';
-                // Update registration link to carry over the Artist role
+                intendedRoleInput.value = 'ARTIST';
                 regLink.href = '/register?role=ARTIST';
             } else {
                 title.textContent = 'Listener Portal';
                 subtitle.textContent = 'Sign in to access your music library';
-                // Update registration link to carry over the Listener role
+                intendedRoleInput.value = 'LISTENER';
                 regLink.href = '/register?role=LISTENER';
             }
         }
@@ -156,6 +169,10 @@
         function goBack() {
             document.getElementById('portal-section').style.display = 'block';
             document.getElementById('login-section').style.display = 'none';
+
+            // Requirement: Clear login fields when going back to portals
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
         }
 
         /**
@@ -255,10 +272,22 @@
         /**
          * Persistence: If server returns error, keep user on login section
          */
-        if (window.location.search.includes('error')) {
-            document.getElementById('portal-section').style.display = 'none';
-            document.getElementById('login-section').style.display = 'block';
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Requirement: Clear login fields and storage on logout/restart
+            const emailField = document.getElementById('email');
+            const passwordField = document.getElementById('password');
+            if (emailField) emailField.value = '';
+            if (passwordField) passwordField.value = '';
+
+            // Clear any potential stored values (localStorage/sessionStorage)
+            localStorage.clear();
+            sessionStorage.clear();
+
+            if (window.location.search.includes('error')) {
+                document.getElementById('portal-section').style.display = 'none';
+                document.getElementById('login-section').style.display = 'block';
+            }
+        });
     </script>
 </body>
 

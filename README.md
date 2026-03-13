@@ -62,7 +62,7 @@ A production-ready, monolithic music streaming web application built with **Spri
 | Security | Spring Security 6 + JWT (jjwt 0.12.5) |
 | ORM | Spring Data JPA (Hibernate 6) |
 | Template Engine | Thymeleaf + Thymeleaf Extras Spring Security 6 |
-| Database | MySQL 8 (prod), H2 (dev/test) |
+| Database | Oracle, H2 (dev/test) |
 | Build | Maven |
 | Logging | Log4J2 |
 | Mapping | ModelMapper 3.2 |
